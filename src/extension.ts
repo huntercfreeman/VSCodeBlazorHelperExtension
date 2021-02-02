@@ -17,24 +17,25 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent();
 
       panel.webview.onDidReceiveMessage(
-        async message => {
-          switch (message) {
-            case 'provideSlnPath':
-              vscode.window.showInformationMessage("message was " + message);
-
-              if (message === "provideSlnPath") {
+        async jsonIdentity => {
+          try {
+            if (jsonIdentity.payload === "provideSlnPath") {
+              await (async function (jsonIdentity) {
                 let solutions = await vscode.workspace.findFiles("**/*.sln");
                 let paths = solutions.map((x) => x.fsPath.toString());
 
                 let selectedSolution = await vscode.window.showQuickPick(paths);
 
                 await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                  panel.webview.postMessage(JSON.stringify(data));
+                  jsonIdentity.payload = JSON.stringify(data);
+                  panel.webview.postMessage(jsonIdentity);
                 });
-              }
-
-              return;
+              })(jsonIdentity);
+            }
+          } catch (ex) {
+            console.error(ex);
           }
+          return;
         },
         undefined,
         context.subscriptions
@@ -52,17 +53,26 @@ function getWebviewContent() {
     <title>Cat Coding</title>
 </head>	
 <body>
-	<script>
+  <script>
   (function () {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        if (e.data === "provideSlnPath") {
-            vscode.postMessage("provideSlnPath");
+        jsonIdentity = e.data;
+
+        if (jsonIdentity.payload === "provideSlnPath") {
+            vscode.postMessage(jsonIdentity);
+        }
+        else if (jsonIdentity.payload === "helloWorld") {
+            console.log("Payload was helloWorld");
+            jsonIdentity.payload = "Hello World! -Object Instance";
+
+            var iFrame = document.getElementById('blazorWebassembly');
+            iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
         }
         else {
-            var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage(e.data, "http://localhost:5000");
+          var iFrame = document.getElementById('blazorWebassembly');
+          iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
         }
     }, false);
 }());
