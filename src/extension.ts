@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
         async message => {
           switch (message) {
             case 'provideSlnPath':
-              vscode.window.showInformationMessage("message was " + message);
+              await vscode.window.showInformationMessage("message was " + message);
 
               if (message.text === "provideSlnPath") {
                 await promptSelectSolutionExplorer(panel);
