@@ -18,11 +18,11 @@ export function activate(context: vscode.ExtensionContext) {
 
       panel.webview.onDidReceiveMessage(
         async message => {
-          switch (message.command) {
-            case 'action':
-              vscode.window.showInformationMessage(message.text);
+          switch (message) {
+            case 'provideSlnPath':
+              vscode.window.showInformationMessage("message was " + message);
 
-              if (message.text === "promptSelectSolutionExplorer") {
+              if (message.text === "provideSlnPath") {
                 await promptSelectSolutionExplorer(panel);
               }
 
@@ -52,8 +52,8 @@ async function promptSelectSolutionExplorer(panel: vscode.WebviewPanel) {
   // Blazor ask for information
   // as is needed? possibly slow
 
-  var x = await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-    panel.webview.postMessage({ command: 'result', text: 'promptSelectSolutionExplorer', data: data });
+  await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
+    panel.webview.postMessage(data);
   });
 }
 
@@ -71,23 +71,12 @@ function getWebviewContent() {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        switch (e.command) {
-            case 'action':
-                if (e.text === "promptSelectSolutionExplorer") {
-                    vscode.postMessage({
-                        command: 'action',
-                        text: 'promptSelectSolutionExplorer'
-                    });
-                }
-            case 'result':
-                if (e.text === "promptSelectSolutionExplorer") {
-                    var iFrame = document.getElementById('blazorWebassembly');
-                    iFrame.contentWindow.postMessage({
-                        command: "result",
-                        text: 'promptSelectSolutionExplorer',
-                        data: e.data
-                    }, "http://localhost:5000");
-                }
+        if (e.data === "provideSlnPath") {
+            vscode.postMessage("provideSlnPath");
+        }
+        else {
+            var iFrame = document.getElementById('blazorWebassembly');
+            iFrame.contentWindow.postMessage(e, "http://localhost:5000");
         }
     }, false);
 }());
