@@ -5,9 +5,12 @@
         if (e.data === "provideSlnPath") {
             vscode.postMessage("provideSlnPath");
         }
+        else if(e.data === "") {
+
+        }
         else {
             var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage("Hello from parent", "http://localhost:5000");
+            iFrame.contentWindow.postMessage(e.data, "http://localhost:5000");
         }
     }, false);
 }());
