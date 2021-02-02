@@ -57,12 +57,12 @@ function getWebviewContent() {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        if (e === "provideSlnPath") {
-            vscode.postMessage(JSON.stringify("provideSlnPath"));
+        if (e.data === "provideSlnPath") {
+            vscode.postMessage("provideSlnPath");
         }
         else {
             var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage(JSON.stringify(e), "http://localhost:5000");
+            iFrame.contentWindow.postMessage(e.data, "http://localhost:5000");
         }
     }, false);
 }());
