@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
                 let selectedSolution = await vscode.window.showQuickPick(paths);
 
                 await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                  panel.webview.postMessage(data);
+                  panel.webview.postMessage(JSON.stringify(data));
                 });
               }
 
@@ -58,11 +58,11 @@ function getWebviewContent() {
 
     window.addEventListener("message", (e) => {
         if (e === "provideSlnPath") {
-            vscode.postMessage("provideSlnPath");
+            vscode.postMessage(JSON.stringify("provideSlnPath"));
         }
         else {
             var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage(e, "http://localhost:5000");
+            iFrame.contentWindow.postMessage(JSON.stringify(e), "http://localhost:5000");
         }
     }, false);
 }());
