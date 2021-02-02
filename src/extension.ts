@@ -20,10 +20,17 @@ export function activate(context: vscode.ExtensionContext) {
         async message => {
           switch (message) {
             case 'provideSlnPath':
-              await vscode.window.showInformationMessage("message was " + message);
+              vscode.window.showInformationMessage("message was " + message);
 
-              if (message.text === "provideSlnPath") {
-                await promptSelectSolutionExplorer(panel);
+              if (message === "provideSlnPath") {
+                let solutions = await vscode.workspace.findFiles("**/*.sln");
+                let paths = solutions.map((x) => x.fsPath.toString());
+
+                let selectedSolution = await vscode.window.showQuickPick(paths);
+
+                await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                  panel.webview.postMessage(data);
+                });
               }
 
               return;
@@ -34,27 +41,6 @@ export function activate(context: vscode.ExtensionContext) {
       );
     })
   );
-}
-
-async function promptSelectSolutionExplorer(panel: vscode.WebviewPanel) {
-  let solutions = await vscode.workspace.findFiles("**/*.sln");
-  let paths = solutions.map((x) => x.fsPath.toString());
-
-  let selectedSolution = await vscode.window.showQuickPick(paths);
-
-  // generate an object that represents
-  // the state of the file system and
-  // pass it to Blazor
-
-  // OR
-
-  // pass selectedSolution and let
-  // Blazor ask for information
-  // as is needed? possibly slow
-
-  await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-    panel.webview.postMessage(data);
-  });
 }
 
 function getWebviewContent() {
