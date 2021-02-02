@@ -71,7 +71,11 @@ function getWebviewContent() {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
+          // var iFrame = document.getElementById('blazorWebassembly');
+          // iFrame.contentWindow.postMessage(e, "http://localhost:5000");
         if (e.data === "provideSlnPath") {
+          // var iFrame = document.getElementById('blazorWebassembly');
+          // iFrame.contentWindow.postMessage("Hello from extension", "http://localhost:5000");
             vscode.postMessage("provideSlnPath");
         }
         else {
