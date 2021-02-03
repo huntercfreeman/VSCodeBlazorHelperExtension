@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent();
 
       panel.webview.onDidReceiveMessage(
-        async vscodeInteropEvent => {
+        async (vscodeInteropEvent : any) => {
 
           if (vscodeInteropEvent.command !== undefined &&
             vscodeInteropEvent.command !== null) {
@@ -80,7 +80,8 @@ function getWebviewContent() {
                     break;
                 }
                 case "provideSlnPath": {
-                    if(vscodeInteropEvent.result === undefined) {
+                    if(vscodeInteropEvent.result === undefined ||
+                        vscodeInteropEvent.result === null) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
                     else {

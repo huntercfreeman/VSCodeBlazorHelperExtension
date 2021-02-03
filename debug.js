@@ -2,6 +2,7 @@
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
+        console.log("Got to Vscode");
         let vscodeInteropEvent = e.data;
 
         if (vscodeInteropEvent.command !== undefined &&
@@ -16,7 +17,9 @@
                     break;
                 }
                 case "provideSlnPath": {
-                    if(vscodeInteropEvent.result === undefined) {
+                    console.log("Command:provideSlnPath");
+                    if(vscodeInteropEvent.result === undefined ||
+                        vscodeInteropEvent.result === null) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
                     else {
