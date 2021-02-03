@@ -44,32 +44,6 @@ export function activate(context: vscode.ExtensionContext) {
               }
             }
           }
-
-
-
-
-          try {
-            if (command === "provideSlnPath") {
-
-            }
-            else if (command === "getProjectFiles") {
-              await (async function (jsonIdentity, message) {
-                jsonIdentity.payload = JSON.stringify("Hey what's up bro");
-                panel.webview.postMessage(jsonIdentity);
-                // let solutions = await vscode.workspace.findFiles("**/*.sln");
-                // let paths = solutions.map((x) => x.fsPath.toString());
-
-                // let selectedSolution = await vscode.window.showQuickPick(paths);
-
-                // await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                //   jsonIdentity.payload = JSON.stringify(data);
-                //   panel.webview.postMessage(jsonIdentity);
-                // });
-              })(jsonIdentity, message);
-            }
-          } catch (ex) {
-            console.error(ex);
-          }
           return;
         },
         undefined,
