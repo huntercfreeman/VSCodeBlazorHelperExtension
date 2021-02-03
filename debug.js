@@ -8,7 +8,7 @@
             vscodeInteropEvent.command !== null) {
 
             switch (vscodeInteropEvent.command) {
-                case helloWorld: {
+                case "helloWorld": {
                     console.log("Payload was helloWorld");
                     jsonIdentity.payload = "Hello World! -Object Instance";
 
@@ -16,7 +16,7 @@
                     iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
                     break;
                 }
-                case provideSlnPath: {
+                case "provideSlnPath": {
                     if(vscodeInteropEvent.result === undefined) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
@@ -26,7 +26,7 @@
                     }
                     break;
                 }
-                case getCsproj: {
+                case "getCsproj": {
                     if(vscodeInteropEvent.result === undefined) {
                         vscode.postMessage(vscodeInteropEvent);
                     }

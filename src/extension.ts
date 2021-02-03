@@ -17,34 +17,40 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent();
 
       panel.webview.onDidReceiveMessage(
-        async jsonIdentity => {
-          let payload = jsonIdentity.payload;
-          let position = 0;
-          let command = "";
-          let message = "";
+        async vscodeInteropEvent => {
 
-          while (position < payload.length) {
-            if (payload[position] === ":") {
-              position++;
-              message = payload.replace(command + ":", "");
-              break;
+          if (vscodeInteropEvent.command !== undefined &&
+            vscodeInteropEvent.command !== null) {
+
+            switch (vscodeInteropEvent.command) {
+              case "provideSlnPath": {
+                await (async function (vscodeInteropEvent) {
+                  let solutions = await vscode.workspace.findFiles("**/*.sln");
+                  let paths = solutions.map((x) => x.fsPath.toString());
+
+                  let selectedSolution = await vscode.window.showQuickPick(paths);
+
+                  await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                    vscodeInteropEvent.result = JSON.stringify(data);
+                    panel.webview.postMessage(vscodeInteropEvent);
+                  });
+                })(vscodeInteropEvent);
+                break;
+              }
+              case "getCsproj": {
+                vscodeInteropEvent.result = "Test getCsproj working";
+                panel.webview.postMessage(vscodeInteropEvent);
+                break;
+              }
             }
-
-            command += payload[position++];
           }
+
+
+
+
           try {
             if (command === "provideSlnPath") {
-              await (async function (jsonIdentity) {
-                let solutions = await vscode.workspace.findFiles("**/*.sln");
-                let paths = solutions.map((x) => x.fsPath.toString());
 
-                let selectedSolution = await vscode.window.showQuickPick(paths);
-
-                await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                  jsonIdentity.payload = JSON.stringify(data);
-                  panel.webview.postMessage(jsonIdentity);
-                });
-              })(jsonIdentity);
             }
             else if (command === "getProjectFiles") {
               await (async function (jsonIdentity, message) {
@@ -93,7 +99,7 @@ function getWebviewContent() {
             vscodeInteropEvent.command !== null) {
 
             switch (vscodeInteropEvent.command) {
-                case helloWorld: {
+                case "helloWorld": {
                     console.log("Payload was helloWorld");
                     jsonIdentity.payload = "Hello World! -Object Instance";
 
@@ -101,7 +107,7 @@ function getWebviewContent() {
                     iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
                     break;
                 }
-                case provideSlnPath: {
+                case "provideSlnPath": {
                     if(vscodeInteropEvent.result === undefined) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
@@ -111,7 +117,7 @@ function getWebviewContent() {
                     }
                     break;
                 }
-                case getCsproj: {
+                case "getCsproj": {
                     if(vscodeInteropEvent.result === undefined) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
