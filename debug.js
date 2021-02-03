@@ -9,11 +9,10 @@
 
             switch (vscodeInteropEvent.command) {
                 case "helloWorld": {
-                    console.log("Payload was helloWorld");
-                    jsonIdentity.payload = "Hello World! -Object Instance";
+                    vscodeInteropEvent.result = "Hello World! -Vscode";
 
                     var iFrame = document.getElementById('blazorWebassembly');
-                    iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                    iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
                     break;
                 }
                 case "provideSlnPath": {
@@ -22,7 +21,7 @@
                     }
                     else {
                         var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
                     }
                     break;
                 }
@@ -32,7 +31,7 @@
                     }
                     else {
                         var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
                     }
                     break;
                 }
