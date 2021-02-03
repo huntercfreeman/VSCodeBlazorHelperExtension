@@ -18,8 +18,22 @@ export function activate(context: vscode.ExtensionContext) {
 
       panel.webview.onDidReceiveMessage(
         async jsonIdentity => {
+          let payload = jsonIdentity.payload;
+          let position = 0;
+          let command = "";
+          let message = "";
+
+          while (position < payload.length) {
+            if (payload[position] === ":") {
+              position++;
+              message = payload.replace(command + ":", "");
+              break;
+            }
+
+            command += payload[position++];
+          }
           try {
-            if (jsonIdentity.payload === "provideSlnPath") {
+            if (command === "provideSlnPath") {
               await (async function (jsonIdentity) {
                 let solutions = await vscode.workspace.findFiles("**/*.sln");
                 let paths = solutions.map((x) => x.fsPath.toString());
@@ -31,6 +45,21 @@ export function activate(context: vscode.ExtensionContext) {
                   panel.webview.postMessage(jsonIdentity);
                 });
               })(jsonIdentity);
+            }
+            else if (command === "getProjectFiles") {
+              await (async function (jsonIdentity, message) {
+                jsonIdentity.payload = JSON.stringify("Hey what's up bro");
+                panel.webview.postMessage(jsonIdentity);
+                // let solutions = await vscode.workspace.findFiles("**/*.sln");
+                // let paths = solutions.map((x) => x.fsPath.toString());
+
+                // let selectedSolution = await vscode.window.showQuickPick(paths);
+
+                // await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                //   jsonIdentity.payload = JSON.stringify(data);
+                //   panel.webview.postMessage(jsonIdentity);
+                // });
+              })(jsonIdentity, message);
             }
           } catch (ex) {
             console.error(ex);
@@ -58,7 +87,26 @@ function getWebviewContent() {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        jsonIdentity = e.data;
+        console.log("Received post from child");
+
+        let jsonIdentity = e.data;
+        let payload = jsonIdentity.payload;
+        let position = 0;
+        let command = "";
+        let message = "";
+
+        while (position < payload.length) {
+            if (payload[position] === ":") {
+                position++;
+                message = payload.replace(command + ":", "");
+                break;
+            }
+
+            command += payload[position++];
+        }
+
+        console.log("Command: " + command);
+        console.log("Message: " + message);
 
         if (jsonIdentity.payload === "provideSlnPath") {
             vscode.postMessage(jsonIdentity);
@@ -70,9 +118,12 @@ function getWebviewContent() {
             var iFrame = document.getElementById('blazorWebassembly');
             iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
         }
+        else if (jsonIdentity.payload === "getProjectFiles") {
+            vscode.postMessage(jsonIdentity);
+        }
         else {
-          var iFrame = document.getElementById('blazorWebassembly');
-          iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+            var iFrame = document.getElementById('blazorWebassembly');
+            iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
         }
     }, false);
 }());
