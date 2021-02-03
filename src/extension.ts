@@ -13,7 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
         { enableScripts: true }
       );
 
-      // And set its HTML content
       panel.webview.html = getWebviewContent();
 
       panel.webview.onDidReceiveMessage(
