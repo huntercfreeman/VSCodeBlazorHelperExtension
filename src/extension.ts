@@ -87,43 +87,41 @@ function getWebviewContent() {
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        console.log("Received post from child");
+        let vscodeInteropEvent = e.data;
 
-        let jsonIdentity = e.data;
-        let payload = jsonIdentity.payload;
-        let position = 0;
-        let command = "";
-        let message = "";
+        if (vscodeInteropEvent.command !== undefined &&
+            vscodeInteropEvent.command !== null) {
 
-        while (position < payload.length) {
-            if (payload[position] === ":") {
-                position++;
-                message = payload.replace(command + ":", "");
-                break;
+            switch (vscodeInteropEvent.command) {
+                case helloWorld: {
+                    console.log("Payload was helloWorld");
+                    jsonIdentity.payload = "Hello World! -Object Instance";
+
+                    var iFrame = document.getElementById('blazorWebassembly');
+                    iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                    break;
+                }
+                case provideSlnPath: {
+                    if(vscodeInteropEvent.result === undefined) {
+                        vscode.postMessage(vscodeInteropEvent);
+                    }
+                    else {
+                        var iFrame = document.getElementById('blazorWebassembly');
+                        iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                    }
+                    break;
+                }
+                case getCsproj: {
+                    if(vscodeInteropEvent.result === undefined) {
+                        vscode.postMessage(vscodeInteropEvent);
+                    }
+                    else {
+                        var iFrame = document.getElementById('blazorWebassembly');
+                        iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
+                    }
+                    break;
+                }
             }
-
-            command += payload[position++];
-        }
-
-        console.log("Command: " + command);
-        console.log("Message: " + message);
-
-        if (jsonIdentity.payload === "provideSlnPath") {
-            vscode.postMessage(jsonIdentity);
-        }
-        else if (jsonIdentity.payload === "helloWorld") {
-            console.log("Payload was helloWorld");
-            jsonIdentity.payload = "Hello World! -Object Instance";
-
-            var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
-        }
-        else if (jsonIdentity.payload === "getProjectFiles") {
-            vscode.postMessage(jsonIdentity);
-        }
-        else {
-            var iFrame = document.getElementById('blazorWebassembly');
-            iFrame.contentWindow.postMessage(jsonIdentity, "http://localhost:5000");
         }
     }, false);
 }());
