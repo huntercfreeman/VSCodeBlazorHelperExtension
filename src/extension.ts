@@ -28,16 +28,22 @@ export function activate(context: vscode.ExtensionContext) {
                   let paths = solutions.map((x) => x.fsPath.toString());
 
                   let selectedSolution = await vscode.window.showQuickPick(paths);
-
-                  await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                    vscodeInteropEvent.result = JSON.stringify(data);
-                    panel.webview.postMessage(vscodeInteropEvent);
-                  });
+                  await (async function (selectedSolution){
+                    await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                      vscodeInteropEvent.targetOne = selectedSolution;
+                      vscodeInteropEvent.result = JSON.stringify(data);
+                      panel.webview.postMessage(vscodeInteropEvent);
+                    });
+                  })(selectedSolution);
                 })(vscodeInteropEvent);
                 break;
               }
               case "getCsproj": {
-                vscodeInteropEvent.result = "Test getCsproj working";
+                
+
+
+
+
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
@@ -91,7 +97,8 @@ function getWebviewContent() {
                     break;
                 }
                 case "getCsproj": {
-                    if(vscodeInteropEvent.result === undefined) {
+                    if(vscodeInteropEvent.result === undefined ||
+                      vscodeInteropEvent.result === null) {
                         vscode.postMessage(vscodeInteropEvent);
                     }
                     else {
