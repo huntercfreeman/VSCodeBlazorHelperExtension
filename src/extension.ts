@@ -1,6 +1,7 @@
 import { fstat } from 'fs';
 import * as vscode from 'vscode';
 const fs = require('fs');
+const path = require("path");
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -16,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent();
 
       panel.webview.onDidReceiveMessage(
-        async (vscodeInteropEvent : any) => {
+        async (vscodeInteropEvent: any) => {
 
           if (vscodeInteropEvent.command !== undefined &&
             vscodeInteropEvent.command !== null) {
@@ -28,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
                   let paths = solutions.map((x) => x.fsPath.toString());
 
                   let selectedSolution = await vscode.window.showQuickPick(paths);
-                  await (async function (selectedSolution){
+                  await (async function (selectedSolution) {
                     await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
                       vscodeInteropEvent.targetOne = selectedSolution;
                       vscodeInteropEvent.result = JSON.stringify(data);
@@ -39,10 +40,28 @@ export function activate(context: vscode.ExtensionContext) {
                 break;
               }
               case "getCsproj": {
-                
+                // Comments are not all the same object
+                // path they're to showcase the ending slash
+                // for when the paths are joined together
 
+                //DM2BD.DTK.DALTests\\DM2BD.DTK.DALTests.csproj\
+                let relativeCsprojPath: string = vscodeInteropEvent.targetOne; 
 
+                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.Solution.sln
+                let absoluteSlnPath: string = vscodeInteropEvent.targetTwo; 
 
+                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution
+                let directoryOfSln = path.dirname(absoluteSlnPath);
+
+                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.DAL\DM2BD.DTK.DAL.csproj\
+                let absoluteCsprojPath = path.join(directoryOfSln, relativeCsprojPath);
+
+                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.DAL
+                let directoryOfCsproj = path.dirname(absoluteCsprojPath);
+
+                console.log("directoryOfCsproj: " + directoryOfCsproj);
+
+                vscodeInteropEvent.result = "debugging";
 
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
