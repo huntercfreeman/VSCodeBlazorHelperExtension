@@ -59,11 +59,24 @@ export function activate(context: vscode.ExtensionContext) {
                 //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.DAL
                 let directoryOfCsproj = path.dirname(absoluteCsprojPath);
 
-                console.log("directoryOfCsproj: " + directoryOfCsproj);
+                await fs.readdir(directoryOfCsproj, (err: any, files: any) => {
+                  // update vscodeInteropEvent.targetOne to be
+                  // the absolute path of the csproj
+                  // the result is the list of files
+                  let csvOfFiles = "";
 
-                vscodeInteropEvent.result = "debugging";
+                  for(let i = 0; i < files.length; i++) {
+                    csvOfFiles += files[i];
+                    
+                    if(i < files.length - 1) {
+                      csvOfFiles += ',';
+                    }
+                  }
 
-                panel.webview.postMessage(vscodeInteropEvent);
+                  vscodeInteropEvent.result = csvOfFiles;
+
+                  panel.webview.postMessage(vscodeInteropEvent);
+                });
                 break;
               }
             }
