@@ -2,43 +2,48 @@
     const vscode = acquireVsCodeApi();
 
     window.addEventListener("message", (e) => {
-        console.log("Got to Vscode");
         let vscodeInteropEvent = e.data;
+        var iFrame = document.getElementById('blazorWebassembly');
 
-        if (vscodeInteropEvent.command !== undefined &&
-            vscodeInteropEvent.command !== null) {
-
-            switch (vscodeInteropEvent.command) {
-                case "helloWorld": {
-                    vscodeInteropEvent.result = "Hello World! -Vscode";
-
-                    var iFrame = document.getElementById('blazorWebassembly');
-                    iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    break;
-                }
-                case "provideSlnPath": {
-                    console.log("Command:provideSlnPath");
-                    if(vscodeInteropEvent.result === undefined ||
-                        vscodeInteropEvent.result === null) {
-                        vscode.postMessage(vscodeInteropEvent);
-                    }
-                    else {
-                        var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    }
-                    break;
-                }
-                case "getCsproj": {
-                    if(vscodeInteropEvent.result === undefined) {
-                        vscode.postMessage(vscodeInteropEvent);
-                    }
-                    else {
-                        var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    }
-                    break;
-                }
+        if (vscodeInteropEvent.command === "getSlns") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
             }
         }
+        else if (vscodeInteropEvent.command === "read") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+        }
+        else if (vscodeInteropEvent.command === "getSiblings") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+            else {
+                var iFrame = document.getElementById('blazorWebassembly');
+                iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
+            }
+        }
+
+        iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);
 }());
+
+// let slnContent = GetSlnContent();
+
+            // let partialResult = "";
+            // let length = slnContent.length;
+            // let index = 0;
+
+            // while (index < length) {
+            //     partialResult += slnContent[index++];
+
+            //     if (partialResult.length > 15999) {
+            //         vscodeInteropEvent.result = partialResult;
+            //         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
+            //         partialResult = "";
+            //     }
+            // }
