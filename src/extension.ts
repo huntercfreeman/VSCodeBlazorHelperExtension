@@ -38,8 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
                   vscodeInteropEvent.result = JSON.stringify(data);
                   panel.webview.postMessage(vscodeInteropEvent);
                 });
+                break;              
               }
-              case "getCsproj": {
+              case "getSiblings": {
                 let directoryOfCsproj = vscodeInteropEvent.targetOne;
 
                 await fs.readdir(directoryOfCsproj, (err: any, files: any) => {
@@ -47,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
                   // the absolute path of the csproj
                   // the result is the list of files
                   let csvOfFiles = "";
-Hunter Freeman DictionaryM
+
                   for (let i = 0; i < files.length; i++) {
                     csvOfFiles += files[i];
 
