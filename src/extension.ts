@@ -23,52 +23,35 @@ export function activate(context: vscode.ExtensionContext) {
             vscodeInteropEvent.command !== null) {
 
             switch (vscodeInteropEvent.command) {
-              case "provideSlnPath": {
+              case "getSlns": {
                 await (async function (vscodeInteropEvent) {
                   let solutions = await vscode.workspace.findFiles("**/*.sln");
                   let paths = solutions.map((x) => x.fsPath.toString());
+                  vscodeInteropEvent.result = paths.join(',');
 
-                  let selectedSolution = await vscode.window.showQuickPick(paths);
-                  await (async function (selectedSolution) {
-                    await fs.readFile(selectedSolution, { "encoding": "UTF-8" }, (err: any, data: any) => {
-                      vscodeInteropEvent.targetOne = selectedSolution;
-                      vscodeInteropEvent.result = JSON.stringify(data);
-                      panel.webview.postMessage(vscodeInteropEvent);
-                    });
-                  })(selectedSolution);
+                  panel.webview.postMessage(vscodeInteropEvent);
                 })(vscodeInteropEvent);
                 break;
               }
+              case "read": {
+                await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                  vscodeInteropEvent.result = JSON.stringify(data);
+                  panel.webview.postMessage(vscodeInteropEvent);
+                });
+              }
               case "getCsproj": {
-                // Comments are not all the same object
-                // path they're to showcase the ending slash
-                // for when the paths are joined together
-
-                //DM2BD.DTK.DALTests\\DM2BD.DTK.DALTests.csproj\
-                let relativeCsprojPath: string = vscodeInteropEvent.targetOne; 
-
-                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.Solution.sln
-                let absoluteSlnPath: string = vscodeInteropEvent.targetTwo; 
-
-                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution
-                let directoryOfSln = path.dirname(absoluteSlnPath);
-
-                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.DAL\DM2BD.DTK.DAL.csproj\
-                let absoluteCsprojPath = path.join(directoryOfSln, relativeCsprojPath);
-
-                //c:\Users\hunter.freeman\source\repos\DTK\Prototype\DM2BD.DTK.Solution\DM2BD.DTK.DAL
-                let directoryOfCsproj = path.dirname(absoluteCsprojPath);
+                let directoryOfCsproj = vscodeInteropEvent.targetOne;
 
                 await fs.readdir(directoryOfCsproj, (err: any, files: any) => {
                   // update vscodeInteropEvent.targetOne to be
                   // the absolute path of the csproj
                   // the result is the list of files
                   let csvOfFiles = "";
-
-                  for(let i = 0; i < files.length; i++) {
+Hunter Freeman DictionaryM
+                  for (let i = 0; i < files.length; i++) {
                     csvOfFiles += files[i];
-                    
-                    if(i < files.length - 1) {
+
+                    if (i < files.length - 1) {
                       csvOfFiles += ',';
                     }
                   }
@@ -105,42 +88,28 @@ function getWebviewContent() {
 
     window.addEventListener("message", (e) => {
         let vscodeInteropEvent = e.data;
+        var iFrame = document.getElementById('blazorWebassembly');
 
-        if (vscodeInteropEvent.command !== undefined &&
-            vscodeInteropEvent.command !== null) {
-
-            switch (vscodeInteropEvent.command) {
-                case "helloWorld": {
-                    vscodeInteropEvent.result = "Hello World! -Vscode";
-
-                    var iFrame = document.getElementById('blazorWebassembly');
-                    iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    break;
-                }
-                case "provideSlnPath": {
-                    if(vscodeInteropEvent.result === undefined ||
-                        vscodeInteropEvent.result === null) {
-                        vscode.postMessage(vscodeInteropEvent);
-                    }
-                    else {
-                        var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    }
-                    break;
-                }
-                case "getCsproj": {
-                    if(vscodeInteropEvent.result === undefined ||
-                      vscodeInteropEvent.result === null) {
-                        vscode.postMessage(vscodeInteropEvent);
-                    }
-                    else {
-                        var iFrame = document.getElementById('blazorWebassembly');
-                        iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-                    }
-                    break;
-                }
+        if (vscodeInteropEvent.command === "getSlns") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
             }
         }
+        else if (vscodeInteropEvent.command === "read") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+        }
+        else if (vscodeInteropEvent.command === "getSiblings") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+        }
+
+        iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);
 }());
   </script>
