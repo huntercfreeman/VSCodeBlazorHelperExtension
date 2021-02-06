@@ -35,15 +35,19 @@ export function activate(context: vscode.ExtensionContext) {
               }
               case "read": {
                 await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, (err: any, data: any) => {
+                  selectedSolutionAbsolutePath = vscodeInteropEvent.targetOne;
                   vscodeInteropEvent.result = JSON.stringify(data);
                   panel.webview.postMessage(vscodeInteropEvent);
                 });
                 break;              
               }
               case "getSiblings": {
-                let directoryOfCsproj = vscodeInteropEvent.targetOne;
+                let relativedirectoryOfCsproj = path.dirname(vscodeInteropEvent.targetOne);
+                let absoluteDirectoryOfSln = path.dirname(selectedSolutionAbsolutePath);
 
-                await fs.readdir(directoryOfCsproj, (err: any, files: any) => {
+                let absoluteDirectoryOfCsproj = path.join(absoluteDirectoryOfSln, relativedirectoryOfCsproj);
+
+                await fs.readdir(absoluteDirectoryOfCsproj, (err: any, files: any) => {
                   // update vscodeInteropEvent.targetOne to be
                   // the absolute path of the csproj
                   // the result is the list of files
@@ -73,6 +77,8 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 }
+
+let selectedSolutionAbsolutePath : string = "";
 
 function getWebviewContent() {
   return `<!DOCTYPE html>
