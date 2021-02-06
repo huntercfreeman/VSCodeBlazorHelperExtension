@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscodeInteropEvent.command !== null) {
 
             switch (vscodeInteropEvent.command) {
-              case "getSlns": {
+              case "getFilesLike": {
                 await (async function (vscodeInteropEvent) {
                   let solutions = await vscode.workspace.findFiles("**/*.sln");
                   let paths = solutions.map((x) => x.fsPath.toString());
@@ -91,7 +91,7 @@ function getWebviewContent() {
         let vscodeInteropEvent = e.data;
         var iFrame = document.getElementById('blazorWebassembly');
 
-        if (vscodeInteropEvent.command === "getSlns") {
+        if (vscodeInteropEvent.command === "getFilesLike") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
@@ -112,6 +112,8 @@ function getWebviewContent() {
 
         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);
+
+    return;
 }());
   </script>
 	<iframe id="blazorWebassembly" style="border: none; width: 100vw; height: 100vh;" src="http://localhost:5000" title="W3Schools Free Online Web Tutorials"></iframe>

@@ -5,7 +5,7 @@
         let vscodeInteropEvent = e.data;
         var iFrame = document.getElementById('blazorWebassembly');
 
-        if (vscodeInteropEvent.command === "getSlns") {
+        if (vscodeInteropEvent.command === "getFilesLike") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
@@ -22,14 +22,12 @@
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
             }
-            else {
-                var iFrame = document.getElementById('blazorWebassembly');
-                iFrame.contentWindow.postMessage(vscodeInteropEvent, "http://localhost:5000");
-            }
         }
 
         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);
+
+    return;
 }());
 
 // let slnContent = GetSlnContent();
