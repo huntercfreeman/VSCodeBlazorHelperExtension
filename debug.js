@@ -23,6 +23,12 @@
                 vscode.postMessage(vscodeInteropEvent);
             }
         }
+        else if (vscodeInteropEvent.command === "readDirectory") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+        }
 
         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);

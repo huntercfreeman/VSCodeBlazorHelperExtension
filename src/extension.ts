@@ -67,6 +67,27 @@ export function activate(context: vscode.ExtensionContext) {
                 });
                 break;
               }
+              case "readDirectory": {
+                await fs.readdir(vscodeInteropEvent.targetOne, (err: any, files: any) => {
+                  // update vscodeInteropEvent.targetOne to be
+                  // the absolute path of the csproj
+                  // the result is the list of files
+                  let csvOfFiles = "";
+
+                  for (let i = 0; i < files.length; i++) {
+                    csvOfFiles += files[i];
+
+                    if (i < files.length - 1) {
+                      csvOfFiles += ',';
+                    }
+                  }
+
+                  vscodeInteropEvent.result = csvOfFiles;
+
+                  panel.webview.postMessage(vscodeInteropEvent);
+                });
+                break;
+              }
             }
           }
           return;
@@ -110,6 +131,12 @@ function getWebviewContent() {
             }
         }
         else if (vscodeInteropEvent.command === "getSiblings") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+            }
+        }
+        else if (vscodeInteropEvent.command === "readDirectory") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
