@@ -122,24 +122,28 @@ function getWebviewContent() {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
         else if (vscodeInteropEvent.command === "read") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
         else if (vscodeInteropEvent.command === "getSiblings") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
         else if (vscodeInteropEvent.command === "readDirectory") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
 
