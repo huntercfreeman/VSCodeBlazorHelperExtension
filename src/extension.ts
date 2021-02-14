@@ -81,11 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
               case "delete": {
                 const edit = new vscode.WorkspaceEdit();
 
-                //let fileUri = vscode.Uri.parse(vscodeInteropEvent.targetOne);
-
                 let fileUri = vscode.Uri.file(vscodeInteropEvent.targetOne);
-
-                //moveFileToTrash
 
                 edit.deleteFile(fileUri, { recursive: true, ignoreIfNotExists: true });
 
@@ -117,7 +113,16 @@ export function activate(context: vscode.ExtensionContext) {
                 break;
               }
               case "addFile": {
-                vscodeInteropEvent.result = "unimplemented";
+                await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                  if (err) {
+                    console.error(err);
+                    return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+                  }
+              
+                  vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+                });
+
+                vscodeInteropEvent.result = "success";
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
