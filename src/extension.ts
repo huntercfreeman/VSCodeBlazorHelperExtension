@@ -114,6 +114,34 @@ export function activate(context: vscode.ExtensionContext) {
                   panel.webview.postMessage(vscodeInteropEvent);
                 });
               }
+              case "cut": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "copy": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "rename": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "addDirectory": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "addFile": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "removeProject": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "newProject": {
+                vscodeInteropEvent.result = "unimplemented";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
             }
           }
           return;
@@ -158,13 +186,6 @@ function getWebviewContent() {
                 return;
             }
         }
-        else if (vscodeInteropEvent.command === "getSiblings") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-            }
-        }
         else if (vscodeInteropEvent.command === "readDirectory") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
@@ -173,19 +194,68 @@ function getWebviewContent() {
             }
         }
         else if (vscodeInteropEvent.command === "open") {
-          if (vscodeInteropEvent.result === undefined ||
-              vscodeInteropEvent.result === null) {
-              vscode.postMessage(vscodeInteropEvent);
-              return;
-          }
-      }
-      else if (vscodeInteropEvent.command === "delete") {
-        if (vscodeInteropEvent.result === undefined ||
-            vscodeInteropEvent.result === null) {
-            vscode.postMessage(vscodeInteropEvent);
-            return;
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
         }
-    }
+        else if (vscodeInteropEvent.command === "delete") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "cut") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "copy") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "rename") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "addDirectory") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "addFile") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "removeProject") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "newProject") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
 
         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);

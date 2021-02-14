@@ -9,24 +9,84 @@
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
         else if (vscodeInteropEvent.command === "read") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
-            }
-        }
-        else if (vscodeInteropEvent.command === "getSiblings") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
         else if (vscodeInteropEvent.command === "readDirectory") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "open") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "delete") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "cut") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "copy") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "rename") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "addDirectory") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "addFile") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "removeProject") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "newProject") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
             }
         }
 
@@ -35,19 +95,3 @@
 
     return;
 }());
-
-// let slnContent = GetSlnContent();
-
-            // let partialResult = "";
-            // let length = slnContent.length;
-            // let index = 0;
-
-            // while (index < length) {
-            //     partialResult += slnContent[index++];
-
-            //     if (partialResult.length > 15999) {
-            //         vscodeInteropEvent.result = partialResult;
-            //         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
-            //         partialResult = "";
-            //     }
-            // }
