@@ -41,32 +41,6 @@ export function activate(context: vscode.ExtensionContext) {
                 });
                 break;
               }
-              case "getSiblings": {
-                let relativedirectoryOfCsproj = path.dirname(vscodeInteropEvent.targetOne);
-                let absoluteDirectoryOfSln = path.dirname(selectedSolutionAbsolutePath);
-
-                let absoluteDirectoryOfCsproj = path.join(absoluteDirectoryOfSln, relativedirectoryOfCsproj);
-
-                await fs.readdir(absoluteDirectoryOfCsproj, (err: any, files: any) => {
-                  // update vscodeInteropEvent.targetOne to be
-                  // the absolute path of the csproj
-                  // the result is the list of files
-                  let csvOfFiles = "";
-
-                  for (let i = 0; i < files.length; i++) {
-                    csvOfFiles += files[i];
-
-                    if (i < files.length - 1) {
-                      csvOfFiles += ',';
-                    }
-                  }
-
-                  vscodeInteropEvent.result = csvOfFiles;
-
-                  panel.webview.postMessage(vscodeInteropEvent);
-                });
-                break;
-              }
               case "readDirectory": {
                 await fs.readdir(vscodeInteropEvent.targetOne, (err: any, files: any) => {
                   // update vscodeInteropEvent.targetOne to be
@@ -102,45 +76,60 @@ export function activate(context: vscode.ExtensionContext) {
 
                 vscodeInteropEvent.result = "success";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "delete": {
                 const edit = new vscode.WorkspaceEdit();
 
-                edit.deleteFile(vscodeInteropEvent.targetOne);
+                //let fileUri = vscode.Uri.parse(vscodeInteropEvent.targetOne);
 
-                vscode.workspace.applyEdit(edit).then(() => {
-                  vscodeInteropEvent.result = "success";
+                let fileUri = vscode.Uri.file(vscodeInteropEvent.targetOne);
 
-                  panel.webview.postMessage(vscodeInteropEvent);
-                });
+                //moveFileToTrash
+
+                edit.deleteFile(fileUri, { recursive: true, ignoreIfNotExists: true });
+
+                await vscode.workspace.applyEdit(edit);
+
+                vscodeInteropEvent.result = "success";
+
+                panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "cut": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "copy": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "rename": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "addDirectory": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "addFile": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "removeProject": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
               case "newProject": {
                 vscodeInteropEvent.result = "unimplemented";
                 panel.webview.postMessage(vscodeInteropEvent);
+                break;
               }
             }
           }
