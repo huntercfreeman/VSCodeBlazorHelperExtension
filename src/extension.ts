@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
                   vscodeInteropEvent.result = JSON.stringify(data);
                   panel.webview.postMessage(vscodeInteropEvent);
                 });
-                break;              
+                break;
               }
               case "getSiblings": {
                 let relativedirectoryOfCsproj = path.dirname(vscodeInteropEvent.targetOne);
@@ -88,6 +88,32 @@ export function activate(context: vscode.ExtensionContext) {
                 });
                 break;
               }
+              case "open": {
+                vscode.workspace.openTextDocument(vscodeInteropEvent.targetOne).then((a: vscode.TextDocument) => {
+                  vscode.window.showTextDocument(a, 1, false).then(e => {
+                    e.edit(edit => {
+                      edit.insert(new vscode.Position(0, 0), "Your advertisement here");
+                    });
+                  });
+                }, (error: any) => {
+                  console.error(error);
+                  debugger;
+                });
+
+                vscodeInteropEvent.result = "success";
+                panel.webview.postMessage(vscodeInteropEvent);
+              }
+              case "delete": {
+                const edit = new vscode.WorkspaceEdit();
+
+                edit.deleteFile(vscodeInteropEvent.targetOne);
+
+                vscode.workspace.applyEdit(edit).then(() => {
+                  vscodeInteropEvent.result = "success";
+
+                  panel.webview.postMessage(vscodeInteropEvent);
+                });
+              }
             }
           }
           return;
@@ -99,7 +125,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-let selectedSolutionAbsolutePath : string = "";
+let selectedSolutionAbsolutePath: string = "";
 
 function getWebviewContent() {
   return `<!DOCTYPE html>
@@ -146,6 +172,20 @@ function getWebviewContent() {
                 return;
             }
         }
+        else if (vscodeInteropEvent.command === "open") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
+      else if (vscodeInteropEvent.command === "delete") {
+        if (vscodeInteropEvent.result === undefined ||
+            vscodeInteropEvent.result === null) {
+            vscode.postMessage(vscodeInteropEvent);
+            return;
+        }
+    }
 
         iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
     }, false);
