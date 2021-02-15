@@ -132,7 +132,16 @@ export function activate(context: vscode.ExtensionContext) {
                 break;
               }
               case "newProject": {
-                vscodeInteropEvent.result = "unimplemented";
+                await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                  if (err) {
+                    console.error(err);
+                    return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+                  }
+              
+                  vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+                });
+
+                vscodeInteropEvent.result = "success";
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
