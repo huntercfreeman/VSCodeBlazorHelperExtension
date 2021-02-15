@@ -108,7 +108,12 @@ export function activate(context: vscode.ExtensionContext) {
                 break;
               }
               case "addDirectory": {
-                vscodeInteropEvent.result = "unimplemented";
+                fs.mkdir(vscodeInteropEvent.targetOne, (err: any) => {
+                  if (err && err.code != 'EEXIST') throw 'up'
+                  //
+                });
+
+                vscodeInteropEvent.result = "success";
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
@@ -118,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
                     console.error(err);
                     return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
                   }
-              
+
                   vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
                 });
 
@@ -137,7 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
                     console.error(err);
                     return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
                   }
-              
+
                   vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
                 });
 
