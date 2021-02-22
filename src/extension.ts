@@ -99,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
               }
               case "paste": {
                 await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, async (err: any, data: any) => {
-                  await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                  await fs.writeFile(vscodeInteropEvent.targetTwo + '\\' + uid() + ".txt", data, (err: any) => {
                     if (err) {
                       console.error(err);
                       return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
@@ -308,4 +308,8 @@ function getWebviewContent() {
 	<iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000" title="W3Schools Free Online Web Tutorials"></iframe>
 </body>
 </html>`;
+}
+
+const uid = function(){
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
