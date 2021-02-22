@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
             switch (vscodeInteropEvent.command) {
               case "getFilesLike": {
                 await (async function (vscodeInteropEvent) {
-                  let solutions = await vscode.workspace.findFiles("**/*.sln");
+                  let solutions = await vscode.workspace.findFiles(vscodeInteropEvent.targetOne);
                   let paths = solutions.map((x) => x.fsPath.toString());
                   vscodeInteropEvent.result = paths.join(',');
 
@@ -119,6 +119,20 @@ export function activate(context: vscode.ExtensionContext) {
               }
               case "addFile": {
                 await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                  if (err) {
+                    console.error(err);
+                    return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+                  }
+
+                  vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+                });
+
+                vscodeInteropEvent.result = "success";
+                panel.webview.postMessage(vscodeInteropEvent);
+                break;
+              }
+              case "overwriteSolutionFile": {
+                await fs.writeFile(vscodeInteropEvent.targetOne, '\ufeff' + vscodeInteropEvent.targetTwo, (err: any) => {
                   if (err) {
                     console.error(err);
                     return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
@@ -250,6 +264,13 @@ function getWebviewContent() {
                 return;
             }
         }
+        else if (vscodeInteropEvent.command === "overwriteSolutionFile") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
         else if (vscodeInteropEvent.command === "removeProject") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
