@@ -97,9 +97,19 @@ export function activate(context: vscode.ExtensionContext) {
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
-              case "copy": {
-                vscodeInteropEvent.result = "unimplemented";
-                panel.webview.postMessage(vscodeInteropEvent);
+              case "paste": {
+                await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, async (err: any, data: any) => {
+                  await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                    if (err) {
+                      console.error(err);
+                      return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+                    }
+
+                    vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+                  });
+                });
+
+                vscodeInteropEvent.result = "success";
                 break;
               }
               case "rename": {
@@ -107,7 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
                   vscodeInteropEvent.result = "success";
                   panel.webview.postMessage(vscodeInteropEvent);
                 });
-                
+
                 break;
               }
               case "addDirectory": {
@@ -239,13 +249,13 @@ function getWebviewContent() {
                 return;
             }
         }
-        else if (vscodeInteropEvent.command === "copy") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-            }
-        }
+        else if (vscodeInteropEvent.command === "paste") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
         else if (vscodeInteropEvent.command === "rename") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
