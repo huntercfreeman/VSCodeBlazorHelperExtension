@@ -103,8 +103,11 @@ export function activate(context: vscode.ExtensionContext) {
                 break;
               }
               case "rename": {
-                vscodeInteropEvent.result = "unimplemented";
-                panel.webview.postMessage(vscodeInteropEvent);
+                await fs.rename(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, () => {
+                  vscodeInteropEvent.result = "success";
+                  panel.webview.postMessage(vscodeInteropEvent);
+                });
+                
                 break;
               }
               case "addDirectory": {
