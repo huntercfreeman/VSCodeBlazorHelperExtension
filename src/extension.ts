@@ -99,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
               }
               case "paste": {
                 await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, async (err: any, data: any) => {
-                  await fs.writeFile(vscodeInteropEvent.targetTwo + '\\' + uid() + ".txt", data, (err: any) => {
+                  await fs.writeFile(vscodeInteropEvent.targetTwo, data, (err: any) => {
                     if (err) {
                       console.error(err);
                       return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
