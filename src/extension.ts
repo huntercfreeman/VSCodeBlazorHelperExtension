@@ -33,6 +33,24 @@ export function activate(context: vscode.ExtensionContext) {
                 })(vscodeInteropEvent);
                 break;
               }
+              case "getWorkspaceAbsolutePath": {
+                let workspaceFolderFsPath = vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath);
+
+                if(workspaceFolderFsPath === null || 
+                    workspaceFolderFsPath === undefined ||
+                    workspaceFolderFsPath.length === 0) {
+                      
+                  vscodeInteropEvent.result = "null";
+                  vscodeInteropEvent.targetOne = "null";
+                  vscodeInteropEvent.targetTwo = "null";
+                }
+                else {
+                  vscodeInteropEvent.result = workspaceFolderFsPath[0];
+                }
+
+                panel.webview.postMessage(vscodeInteropEvent);
+                break;
+              }
               case "read": {
                 await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, (err: any, data: any) => {
                   selectedSolutionAbsolutePath = vscodeInteropEvent.targetOne;
@@ -92,11 +110,6 @@ export function activate(context: vscode.ExtensionContext) {
                 panel.webview.postMessage(vscodeInteropEvent);
                 break;
               }
-              case "cut": {
-                vscodeInteropEvent.result = "unimplemented";
-                panel.webview.postMessage(vscodeInteropEvent);
-                break;
-              }
               case "paste": {
                 await fs.readFile(vscodeInteropEvent.targetOne, { "encoding": "UTF-8" }, async (err: any, data: any) => {
                   await fs.writeFile(vscodeInteropEvent.targetTwo, data, (err: any) => {
@@ -109,7 +122,20 @@ export function activate(context: vscode.ExtensionContext) {
                   });
                 });
 
+                if (vscodeInteropEvent.message === "wasCut") {
+                  const edit = new vscode.WorkspaceEdit();
+
+                  let fileUri = vscode.Uri.file(vscodeInteropEvent.targetOne);
+
+                  edit.deleteFile(fileUri, { recursive: true, ignoreIfNotExists: true });
+
+                  await vscode.workspace.applyEdit(edit);
+                }
+
                 vscodeInteropEvent.result = "success";
+
+                panel.webview.postMessage(vscodeInteropEvent);
+
                 break;
               }
               case "rename": {
@@ -214,6 +240,13 @@ function getWebviewContent() {
                 return;
             }
         }
+        else if (vscodeInteropEvent.command === "getWorkspaceAbsolutePath") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
         else if (vscodeInteropEvent.command === "read") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
@@ -236,13 +269,6 @@ function getWebviewContent() {
             }
         }
         else if (vscodeInteropEvent.command === "delete") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-            }
-        }
-        else if (vscodeInteropEvent.command === "cut") {
             if (vscodeInteropEvent.result === undefined ||
                 vscodeInteropEvent.result === null) {
                 vscode.postMessage(vscodeInteropEvent);
@@ -310,6 +336,6 @@ function getWebviewContent() {
 </html>`;
 }
 
-const uid = function(){
+const uid = function () {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
