@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscodeblazorhelper.helloWorld"
+		"onCommand:vscodeblazorhelper.helloWorld",
+		"onView:vstodo-sidebar"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
