@@ -1,9 +1,16 @@
 import { fstat } from 'fs';
 import * as vscode from 'vscode';
+import { SidebarProvider } from "./SidebarProvider";
 const fs = require('fs');
 const path = require("path");
 
 export function activate(context: vscode.ExtensionContext) {
+  const sidebarProvider = new SidebarProvider(context.extensionUri);
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("vstodo-sidebar", sidebarProvider)
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand('vscodeblazorhelper.helloWorld', () => {
       // Create and show panel
@@ -36,10 +43,10 @@ export function activate(context: vscode.ExtensionContext) {
               case "getWorkspaceAbsolutePath": {
                 let workspaceFolderFsPath = vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath);
 
-                if(workspaceFolderFsPath === null || 
-                    workspaceFolderFsPath === undefined ||
-                    workspaceFolderFsPath.length === 0) {
-                      
+                if (workspaceFolderFsPath === null ||
+                  workspaceFolderFsPath === undefined ||
+                  workspaceFolderFsPath.length === 0) {
+
                   vscodeInteropEvent.result = "null";
                   vscodeInteropEvent.targetOne = "null";
                   vscodeInteropEvent.targetTwo = "null";
