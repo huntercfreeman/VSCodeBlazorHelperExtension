@@ -209,6 +209,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                         vscodeInteropEvent.result = "pass along";
                         webviewView.webview.postMessage(vscodeInteropEvent);
                       }
+                      case "getSelectedSlnAbsolutePath": {
+                        vscodeInteropEvent.result = "pazss\\alosng.sln";
+                        panel.webview.postMessage(vscodeInteropEvent);
+                      }
                     }
                   }
                   var x = 2;
@@ -393,6 +397,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 return;
             }
         }
+        else if (vscodeInteropEvent.command === "getSelectedSlnAbsolutePath") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+          }
+      }
   
           iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
       }, false);
@@ -400,7 +411,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       return;
   }());
     </script>
-    <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000/testPage" title="W3Schools Free Online Web Tutorials"></iframe>
+    <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000/newProjectForm" title="W3Schools Free Online Web Tutorials"></iframe>
   </body>
   </html>`;
   }
