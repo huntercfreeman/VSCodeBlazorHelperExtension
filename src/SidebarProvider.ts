@@ -6,7 +6,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
   _doc?: vscode.TextDocument;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri) { }
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
     this._view = webviewView;
@@ -19,6 +19,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this.getWebviewContent();
+
+    vscode.workspace.onDidCreateFiles(changeEvent => {
+      let vscodeInteropEvent = {
+        command: 'stateHasChanged',
+        result: 'not null'
+      };
+
+      webviewView.webview.postMessage(vscodeInteropEvent);
+
+      // console.log(`Did change: ${changeEvent.document.uri}`);
+
+      // for (const change of changeEvent.contentChanges) {
+      //   console.log(change.range); // range of text being replaced
+      //   console.log(change.text); // text replacement
+      // }
+    });
 
     webviewView.webview.onDidReceiveMessage(
       async (vscodeInteropEvent: any) => {
@@ -192,6 +208,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "newProject": {
+              const panel = vscode.window.createWebviewPanel(
+                'catCoding',
+                'Cat Coding',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+              );
+
+              panel.webview.html = this.getNewProjectHtml();
+
+              panel.webview.postMessage({
+                command: "testStorage",
+                targetOne: "Hello World from the sidebar",
+                result: "notnull"
+              });
+
+              /*
               await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
                 if (err) {
                   console.error(err);
@@ -204,11 +236,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               vscodeInteropEvent.result = "success";
               webviewView.webview.postMessage(vscodeInteropEvent);
               break;
+              */
             }
           }
         }
         return;
-    });
+      });
   }
 
   public revive(webviewView: vscode.WebviewView) {
@@ -331,6 +364,140 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }());
     </script>
     <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000" title="W3Schools Free Online Web Tutorials"></iframe>
+  </body>
+  </html>`;
+  }
+
+  private getNewProjectHtml() {
+    return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cat Coding</title>
+  </head>	
+  <body>
+    <script>
+    (function () {
+      const vscode = acquireVsCodeApi();
+  
+      window.addEventListener("message", (e) => {
+          let vscodeInteropEvent = e.data;
+          var iFrame = document.getElementById('blazorWebassembly');
+  
+          if (vscodeInteropEvent.command === "getFilesLike") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "getWorkspaceAbsolutePath") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+        else if (vscodeInteropEvent.command === "testStorage") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
+      else if (vscodeInteropEvent.command === "stateHasChanged") {
+        if (vscodeInteropEvent.result === undefined ||
+            vscodeInteropEvent.result === null) {
+            vscode.postMessage(vscodeInteropEvent);
+            return;
+        }
+    }
+          else if (vscodeInteropEvent.command === "read") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "readDirectory") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "open") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "delete") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "paste") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+          else if (vscodeInteropEvent.command === "rename") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "addDirectory") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "addFile") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "overwriteSolutionFile") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
+          else if (vscodeInteropEvent.command === "removeProject") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+          else if (vscodeInteropEvent.command === "newProject") {
+              if (vscodeInteropEvent.result === undefined ||
+                  vscodeInteropEvent.result === null) {
+                  vscode.postMessage(vscodeInteropEvent);
+                  return;
+              }
+          }
+  
+          iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
+      }, false);
+  
+      return;
+  }());
+    </script>
+    <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000/testPage" title="W3Schools Free Online Web Tutorials"></iframe>
   </body>
   </html>`;
   }
