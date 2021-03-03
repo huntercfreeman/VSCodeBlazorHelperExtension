@@ -20,6 +20,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getWebviewContent();
 
+    let selectedSlnAbsolutePath: string = "";
+
     webviewView.webview.onDidReceiveMessage(
       async (vscodeInteropEvent: any) => {
         if (vscodeInteropEvent.command !== undefined &&
@@ -210,7 +212,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                         webviewView.webview.postMessage(vscodeInteropEvent);
                       }
                       case "getSelectedSlnAbsolutePath": {
-                        vscodeInteropEvent.result = "pazss\\alosng.sln";
+                        vscodeInteropEvent.result = selectedSlnAbsolutePath;
                         panel.webview.postMessage(vscodeInteropEvent);
                       }
                     }
@@ -227,6 +229,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 result: "notnull"
               });
 
+              break;
+            }
+            case "saveSelectedSlnAbsolutePath": {
+              selectedSlnAbsolutePath = vscodeInteropEvent.targetOne;
+
+              vscodeInteropEvent.result = "success";
+              webviewView.webview.postMessage(vscodeInteropEvent);
               break;
             }
           }
@@ -347,6 +356,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                   return;
               }
           }
+          else if (vscodeInteropEvent.command === "saveSelectedSlnAbsolutePath") {
+            if (vscodeInteropEvent.result === undefined ||
+                vscodeInteropEvent.result === null) {
+                vscode.postMessage(vscodeInteropEvent);
+                return;
+            }
+        }
   
           iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
       }, false);
