@@ -161,6 +161,39 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "addFile": {
+              const panel = vscode.window.createWebviewPanel(
+                'addFile',
+                'Add File',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+              );
+          
+              panel.webview.onDidReceiveMessage(
+                async (vscodeInteropEvent: any) => {
+                  if (vscodeInteropEvent.command !== undefined &&
+                    vscodeInteropEvent.command !== null) {
+          
+                    switch (vscodeInteropEvent.command) {
+                      case "sendTextToSidePanel": {
+                        vscodeInteropEvent.result = "pass along";
+                        webviewView.webview.postMessage(vscodeInteropEvent);
+                      }
+                      case "getSelectedSlnAbsolutePath": {
+                        vscodeInteropEvent.result = selectedSlnAbsolutePath;
+                        panel.webview.postMessage(vscodeInteropEvent);
+                      }
+                    }
+                  }
+                }
+              );
+
+              panel.webview.html = this.getNewProjectHtml();
+
+              break;
+
+
+
+              // TODO: important
               await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
                 if (err) {
                   console.error(err);
@@ -195,8 +228,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             case "newProject": {
               const panel = vscode.window.createWebviewPanel(
-                'catCoding',
-                'Cat Coding',
+                'newProject',
+                'New Project',
                 vscode.ViewColumn.One,
                 { enableScripts: true }
               );
@@ -217,7 +250,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                       }
                     }
                   }
-                  var x = 2;
                 }
               );
 
