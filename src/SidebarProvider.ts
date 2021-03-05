@@ -227,6 +227,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "newProject": {
+              vscode.window.createWebviewPanel vscode.WebviewPanel
               const panel = vscode.window.createWebviewPanel(
                 'newProject',
                 'New Project',
@@ -403,63 +404,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }());
     </script>
     <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000" title="W3Schools Free Online Web Tutorials"></iframe>
-  </body>
-  </html>`;
-  }
-
-  private getNewProjectHtml() {
-    return `<!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Cat Coding</title>
-  </head>	
-  <body>
-    <script>
-    (function () {
-      const vscode = acquireVsCodeApi();
-  
-      window.addEventListener("message", (e) => {
-          let vscodeInteropEvent = e.data;
-          var iFrame = document.getElementById('blazorWebassembly');
-  
-          if (vscodeInteropEvent.command === "getFilesLike") {
-              if (vscodeInteropEvent.result === undefined ||
-                  vscodeInteropEvent.result === null) {
-                  vscode.postMessage(vscodeInteropEvent);
-                  return;
-              }
-          }
-          else if (vscodeInteropEvent.command === "sendTextToSidePanel") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-            }
-        }
-          else if (vscodeInteropEvent.command === "getWorkspaceAbsolutePath") {
-            if (vscodeInteropEvent.result === undefined ||
-                vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-            }
-        }
-        else if (vscodeInteropEvent.command === "getSelectedSlnAbsolutePath") {
-          if (vscodeInteropEvent.result === undefined ||
-              vscodeInteropEvent.result === null) {
-                vscode.postMessage(vscodeInteropEvent);
-                return;
-          }
-      }
-  
-          iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
-      }, false);
-  
-      return;
-  }());
-    </script>
-    <iframe id="blazorWebassembly" style="border: none; width: 95vw; height: 95vh; max-width: 95vw; max-height: 95vh;" src="http://localhost:5000/newProjectForm" title="W3Schools Free Online Web Tutorials"></iframe>
   </body>
   </html>`;
   }
