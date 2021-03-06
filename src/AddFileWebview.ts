@@ -6,8 +6,8 @@ export class AddFileWebview {
   _panel?: vscode.WebviewPanel;
 
   constructor(private readonly _extensionUri: vscode.Uri,
-              private readonly _selectedSlnAbsolutePath: string,
-              private readonly _toBeParentFolder: string) { }
+              private readonly _toBeParentFolder: string,
+              private readonly _templateKey: string) { }
 
   public resolveWebviewView(webviewView: vscode.WebviewPanel) {
     this._panel = webviewView;
@@ -25,12 +25,14 @@ export class AddFileWebview {
           vscodeInteropEvent.command !== null) {
 
           switch (vscodeInteropEvent.command) {
-            case "sendTextToSidePanel": {
-              vscodeInteropEvent.result = "pass along";
-              webviewView.webview.postMessage(vscodeInteropEvent);
-            }
-            case "getSelectedSlnAbsolutePath": {
-              vscodeInteropEvent.result = this._selectedSlnAbsolutePath;
+            // case "sendTextToSidePanel": {
+            //   vscodeInteropEvent.result = "pass along";
+            //   webviewView.webview.postMessage(vscodeInteropEvent);
+            // }
+            case "getData": {
+              vscodeInteropEvent.targetOne = this._toBeParentFolder;
+              vscodeInteropEvent.targetTwo = this._templateKey;
+
               webviewView.webview.postMessage(vscodeInteropEvent);
             }
           }

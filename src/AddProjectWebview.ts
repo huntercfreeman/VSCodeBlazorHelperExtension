@@ -24,10 +24,10 @@ export class AddProjectWebview {
           vscodeInteropEvent.command !== null) {
 
           switch (vscodeInteropEvent.command) {
-            case "sendTextToSidePanel": {
-              vscodeInteropEvent.result = "pass along";
-              webviewView.webview.postMessage(vscodeInteropEvent);
-            }
+            // case "sendTextToSidePanel": {
+            //   vscodeInteropEvent.result = "pass along";
+            //   webviewView.webview.postMessage(vscodeInteropEvent);
+            // }
             case "getSelectedSlnAbsolutePath": {
               vscodeInteropEvent.result = this._selectedSlnAbsolutePath;
               webviewView.webview.postMessage(vscodeInteropEvent);

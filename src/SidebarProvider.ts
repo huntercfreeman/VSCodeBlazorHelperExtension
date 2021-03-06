@@ -164,8 +164,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             case "addFile": {
               const addProjectWebview = new AddFileWebview(this._extensionUri, 
-                selectedSlnAbsolutePath, 
-                vscodeInteropEvent.targetOne);
+                vscodeInteropEvent.targetOne,
+                vscodeInteropEvent.targetTwo);
 
               const panel = vscode.window.createWebviewPanel(
                 'newProject',
@@ -222,6 +222,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               // vscodeInteropEvent.result = "success";
               // webviewView.webview.postMessage(vscodeInteropEvent);
               // break;
+            }
+            case "openAddFileForm": {
+              const addProjectWebview = new AddFileWebview(this._extensionUri, 
+                vscodeInteropEvent.targetOne,
+                vscodeInteropEvent.targetTwo);
+
+              const panel = vscode.window.createWebviewPanel(
+                'newProject',
+                'New Project',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+              );
+
+              addProjectWebview.resolveWebviewView(panel);
+              break;
             }
             case "overwriteSolutionFile": {
               await fs.writeFile(vscodeInteropEvent.targetOne, '\ufeff' + vscodeInteropEvent.targetTwo, (err: any) => {
