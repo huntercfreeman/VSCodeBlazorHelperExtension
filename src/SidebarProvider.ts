@@ -163,79 +163,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "addFile": {
-              const addProjectWebview = new AddFileWebview(this._extensionUri, 
-                vscodeInteropEvent.targetOne,
-                vscodeInteropEvent.targetTwo);
+              await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+                if (err) {
+                  console.error(err);
+                  return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+                }
 
-              const panel = vscode.window.createWebviewPanel(
-                'newProject',
-                'New Project',
-                vscode.ViewColumn.One,
-                { enableScripts: true }
-              );
+                vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+              });
 
-              addProjectWebview.resolveWebviewView(panel);
+              vscodeInteropEvent.result = "success";
+              webviewView.webview.postMessage(vscodeInteropEvent);
               break;
-
-              // const panel = vscode.window.createWebviewPanel(
-              //   'addFile',
-              //   'Add File',
-              //   vscode.ViewColumn.One,
-              //   { enableScripts: true }
-              // );
-          
-              // panel.webview.onDidReceiveMessage(
-              //   async (vscodeInteropEvent: any) => {
-              //     if (vscodeInteropEvent.command !== undefined &&
-              //       vscodeInteropEvent.command !== null) {
-          
-              //       switch (vscodeInteropEvent.command) {
-              //         case "sendTextToSidePanel": {
-              //           vscodeInteropEvent.result = "pass along";
-              //           webviewView.webview.postMessage(vscodeInteropEvent);
-              //         }
-              //         case "getSelectedSlnAbsolutePath": {
-              //           vscodeInteropEvent.result = selectedSlnAbsolutePath;
-              //           panel.webview.postMessage(vscodeInteropEvent);
-              //         }
-              //       }
-              //     }
-              //   }
-              // );
-
-              // panel.webview.html = this.getNewProjectHtml();
-
-              // break;
-
-
-
-              // // TODO: important
-              // await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
-              //   if (err) {
-              //     console.error(err);
-              //     return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
-              //   }
-
-              //   vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
-              // });
-
-              // vscodeInteropEvent.result = "success";
-              // webviewView.webview.postMessage(vscodeInteropEvent);
-              // break;
             }
             case "openAddFileForm": {
-              const addProjectWebview = new AddFileWebview(this._extensionUri, 
+              const addFileWebview = new AddFileWebview(this._extensionUri, 
                 vscodeInteropEvent.targetOne,
                 vscodeInteropEvent.targetTwo);
 
               const panel = vscode.window.createWebviewPanel(
-                'newProject',
-                'New Project',
+                'newFile',
+                'New File',
                 vscode.ViewColumn.One,
                 { enableScripts: true }
               );
 
-              addProjectWebview.resolveWebviewView(panel);
+              addFileWebview.resolveWebviewView(panel);
               break;
             }
             case "overwriteSolutionFile": {
@@ -402,6 +355,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 return;
             }
         }
+        else if (vscodeInteropEvent.command === "openAddFileForm") {
+          if (vscodeInteropEvent.result === undefined ||
+              vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+          }
+      }
   
           iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
       }, false);
