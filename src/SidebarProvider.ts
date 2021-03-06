@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { fstat } from 'fs';
 import { AddProjectWebview } from "./AddProjectWebview";
+import { AddFileWebview } from "./AddFileWebview";
 const fs = require('fs');
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -162,6 +163,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "addFile": {
+              const addProjectWebview = new AddFileWebview(this._extensionUri, 
+                selectedSlnAbsolutePath, 
+                vscodeInteropEvent.targetOne);
+
+              const panel = vscode.window.createWebviewPanel(
+                'newProject',
+                'New Project',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+              );
+
+              addProjectWebview.resolveWebviewView(panel);
+              break;
+
               // const panel = vscode.window.createWebviewPanel(
               //   'addFile',
               //   'Add File',
