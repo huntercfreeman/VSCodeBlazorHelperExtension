@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { fstat } from 'fs';
 const fs = require('fs');
 
-export class NewProjectWebview {
+export class AddProjectWebview {
   _panel?: vscode.WebviewPanel;
 
   constructor(private readonly _extensionUri: vscode.Uri,

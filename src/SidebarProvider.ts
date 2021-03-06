@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { fstat } from 'fs';
-import { NewProjectWebview } from "./NewProjectWebview";
+import { AddProjectWebview } from "./AddProjectWebview";
 const fs = require('fs');
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -228,7 +228,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "newProject": {
-              const newProjectWebviewState = new NewProjectWebview(this._extensionUri, selectedSlnAbsolutePath);
+              const addProjectWebview = new AddProjectWebview(this._extensionUri, selectedSlnAbsolutePath);
 
               const panel = vscode.window.createWebviewPanel(
                 'newProject',
@@ -237,7 +237,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 { enableScripts: true }
               );
 
-              newProjectWebviewState.resolveWebviewView(panel);
+              addProjectWebview.resolveWebviewView(panel);
               break;
             }
             case "saveSelectedSlnAbsolutePath": {
