@@ -29,9 +29,10 @@ export class AddFileWebview {
             //   vscodeInteropEvent.result = "pass along";
             //   webviewView.webview.postMessage(vscodeInteropEvent);
             // }
-            case "getData": {
+            case "getPageData": {
               vscodeInteropEvent.targetOne = this._toBeParentFolder;
               vscodeInteropEvent.targetTwo = this._templateKey;
+              vscodeInteropEvent.result = "success";
 
               webviewView.webview.postMessage(vscodeInteropEvent);
             }
@@ -92,6 +93,13 @@ export class AddFileWebview {
                 return;
           }
       }
+      else if (vscodeInteropEvent.command === "getPageData") {
+        if (vscodeInteropEvent.result === undefined ||
+            vscodeInteropEvent.result === null) {
+              vscode.postMessage(vscodeInteropEvent);
+              return;
+        }
+    }
   
           iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
       }, false);
