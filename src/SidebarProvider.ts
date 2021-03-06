@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { fstat } from 'fs';
+import { NewProjectWebview } from "./NewProjectWebview";
 const fs = require('fs');
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -161,51 +162,51 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "addFile": {
-              const panel = vscode.window.createWebviewPanel(
-                'addFile',
-                'Add File',
-                vscode.ViewColumn.One,
-                { enableScripts: true }
-              );
+              // const panel = vscode.window.createWebviewPanel(
+              //   'addFile',
+              //   'Add File',
+              //   vscode.ViewColumn.One,
+              //   { enableScripts: true }
+              // );
           
-              panel.webview.onDidReceiveMessage(
-                async (vscodeInteropEvent: any) => {
-                  if (vscodeInteropEvent.command !== undefined &&
-                    vscodeInteropEvent.command !== null) {
+              // panel.webview.onDidReceiveMessage(
+              //   async (vscodeInteropEvent: any) => {
+              //     if (vscodeInteropEvent.command !== undefined &&
+              //       vscodeInteropEvent.command !== null) {
           
-                    switch (vscodeInteropEvent.command) {
-                      case "sendTextToSidePanel": {
-                        vscodeInteropEvent.result = "pass along";
-                        webviewView.webview.postMessage(vscodeInteropEvent);
-                      }
-                      case "getSelectedSlnAbsolutePath": {
-                        vscodeInteropEvent.result = selectedSlnAbsolutePath;
-                        panel.webview.postMessage(vscodeInteropEvent);
-                      }
-                    }
-                  }
-                }
-              );
+              //       switch (vscodeInteropEvent.command) {
+              //         case "sendTextToSidePanel": {
+              //           vscodeInteropEvent.result = "pass along";
+              //           webviewView.webview.postMessage(vscodeInteropEvent);
+              //         }
+              //         case "getSelectedSlnAbsolutePath": {
+              //           vscodeInteropEvent.result = selectedSlnAbsolutePath;
+              //           panel.webview.postMessage(vscodeInteropEvent);
+              //         }
+              //       }
+              //     }
+              //   }
+              // );
 
-              panel.webview.html = this.getNewProjectHtml();
+              // panel.webview.html = this.getNewProjectHtml();
 
-              break;
+              // break;
 
 
 
-              // TODO: important
-              await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
-                if (err) {
-                  console.error(err);
-                  return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
-                }
+              // // TODO: important
+              // await fs.writeFile(vscodeInteropEvent.targetOne, vscodeInteropEvent.targetTwo, (err: any) => {
+              //   if (err) {
+              //     console.error(err);
+              //     return vscode.window.showErrorMessage("Failed to create " + vscodeInteropEvent.targetOne);
+              //   }
 
-                vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
-              });
+              //   vscode.window.showInformationMessage("Created " + vscodeInteropEvent.targetOne);
+              // });
 
-              vscodeInteropEvent.result = "success";
-              webviewView.webview.postMessage(vscodeInteropEvent);
-              break;
+              // vscodeInteropEvent.result = "success";
+              // webviewView.webview.postMessage(vscodeInteropEvent);
+              // break;
             }
             case "overwriteSolutionFile": {
               await fs.writeFile(vscodeInteropEvent.targetOne, '\ufeff' + vscodeInteropEvent.targetTwo, (err: any) => {
@@ -227,41 +228,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "newProject": {
-              vscode.window.createWebviewPanel vscode.WebviewPanel
+              const newProjectWebviewState = new NewProjectWebview(this._extensionUri, selectedSlnAbsolutePath);
+
               const panel = vscode.window.createWebviewPanel(
                 'newProject',
                 'New Project',
                 vscode.ViewColumn.One,
                 { enableScripts: true }
               );
-          
-              panel.webview.onDidReceiveMessage(
-                async (vscodeInteropEvent: any) => {
-                  if (vscodeInteropEvent.command !== undefined &&
-                    vscodeInteropEvent.command !== null) {
-          
-                    switch (vscodeInteropEvent.command) {
-                      case "sendTextToSidePanel": {
-                        vscodeInteropEvent.result = "pass along";
-                        webviewView.webview.postMessage(vscodeInteropEvent);
-                      }
-                      case "getSelectedSlnAbsolutePath": {
-                        vscodeInteropEvent.result = selectedSlnAbsolutePath;
-                        panel.webview.postMessage(vscodeInteropEvent);
-                      }
-                    }
-                  }
-                }
-              );
 
-              panel.webview.html = this.getNewProjectHtml();
-
-              panel.webview.postMessage({
-                command: "testStorage",
-                targetOne: "Hello World from the sidebar",
-                result: "notnull"
-              });
-
+              newProjectWebviewState.resolveWebviewView(panel);
               break;
             }
             case "saveSelectedSlnAbsolutePath": {

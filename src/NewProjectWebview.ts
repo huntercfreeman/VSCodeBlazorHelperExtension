@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 import { fstat } from 'fs';
 const fs = require('fs');
 
-export class SidebarProvider implements vscode.WebviewViewProvider {
-  _view?: vscode.WebviewView;
-  _doc?: vscode.TextDocument;
+export class NewProjectWebview {
+  _panel?: vscode.WebviewPanel;
 
-  constructor(private readonly _webviewPanel: vscode.WebviewPanel) { }
+  constructor(private readonly _extensionUri: vscode.Uri,
+              private readonly _selectedSlnAbsolutePath: string) { }
 
-  public resolveWebviewView(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
+  public resolveWebviewView(webviewView: vscode.WebviewPanel) {
+    this._panel = webviewView;
 
     webviewView.webview.options = {
       // Allow scripts in the webview
@@ -18,35 +18,31 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this.getWebviewContent();
-
-    // let selectedSlnAbsolutePath: string = "";
-
     webviewView.webview.onDidReceiveMessage(
       async (vscodeInteropEvent: any) => {
         if (vscodeInteropEvent.command !== undefined &&
           vscodeInteropEvent.command !== null) {
 
           switch (vscodeInteropEvent.command) {
-            case "getFilesLike": {
-              await (async function (vscodeInteropEvent) {
-                let solutions = await vscode.workspace.findFiles(vscodeInteropEvent.targetOne);
-                let paths = solutions.map((x) => x.fsPath.toString());
-                vscodeInteropEvent.result = paths.join(',');
-
-                webviewView.webview.postMessage(vscodeInteropEvent);
-              })(vscodeInteropEvent);
-              break;
+            case "sendTextToSidePanel": {
+              vscodeInteropEvent.result = "pass along";
+              webviewView.webview.postMessage(vscodeInteropEvent);
+            }
+            case "getSelectedSlnAbsolutePath": {
+              vscodeInteropEvent.result = this._selectedSlnAbsolutePath;
+              webviewView.webview.postMessage(vscodeInteropEvent);
             }
           }
         }
-        return;
-      });
+      }
+    );
+
+    webviewView.webview.html = this.getWebviewContent();
   }
 
-  public revive(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
-  }
+  // public revive(webviewView: vscode.WebviewView) {
+  //   this._panel = webviewView;
+  // }
 
   private getWebviewContent() {
     return `<!DOCTYPE html>
