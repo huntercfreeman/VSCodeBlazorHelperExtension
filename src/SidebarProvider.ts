@@ -179,7 +179,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             case "openAddFileForm": {
               const addFileWebview = new AddFileWebview(this._extensionUri, 
                 vscodeInteropEvent.targetOne,
-                vscodeInteropEvent.targetTwo);
+                vscodeInteropEvent.targetTwo,
+                vscodeInteropEvent.message);
 
               const panel = vscode.window.createWebviewPanel(
                 'newFile',

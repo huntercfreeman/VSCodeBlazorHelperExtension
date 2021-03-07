@@ -7,7 +7,8 @@ export class AddFileWebview {
 
   constructor(private readonly _extensionUri: vscode.Uri,
               private readonly _toBeParentFolder: string,
-              private readonly _templateKey: string) { }
+              private readonly _templateKey: string,
+              private readonly _namespace: string) { }
 
   public resolveWebviewView(webviewView: vscode.WebviewPanel) {
     this._panel = webviewView;
@@ -32,6 +33,7 @@ export class AddFileWebview {
             case "getPageData": {
               vscodeInteropEvent.targetOne = this._toBeParentFolder;
               vscodeInteropEvent.targetTwo = this._templateKey;
+              vscodeInteropEvent.message = this._namespace;
               vscodeInteropEvent.result = "success";
 
               webviewView.webview.postMessage(vscodeInteropEvent);
