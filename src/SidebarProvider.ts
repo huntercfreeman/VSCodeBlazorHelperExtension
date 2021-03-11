@@ -87,16 +87,35 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "open": {
+              // vscode.workspace.openTextDocument(vscodeInteropEvent.targetOne).then((a: vscode.TextDocument) => {
+              //   vscode.window.showTextDocument(a, 1, false).then(e => {
+              //     e.edit(edit => {
+              //       edit.insert(new vscode.Position(0, 0), "Your advertisement here");
+              //     });
+              //   });
+              // }, (error: any) => {
+              //   console.error(error);
+              //   debugger;
+              // });
+
+              let textDocumentShowOptions: vscode.TextDocumentShowOptions = {
+                "preserveFocus": false,
+                "preview": false,
+                "viewColumn": vscode.ViewColumn.One
+              };
+
               vscode.workspace.openTextDocument(vscodeInteropEvent.targetOne).then((a: vscode.TextDocument) => {
-                vscode.window.showTextDocument(a, 1, false).then(e => {
-                  e.edit(edit => {
-                    edit.insert(new vscode.Position(0, 0), "Your advertisement here");
-                  });
-                });
+                vscode.window.showTextDocument(a, textDocumentShowOptions);
               }, (error: any) => {
                 console.error(error);
                 debugger;
               });
+              // vscode.workspace.openTextDocument(vscodeInteropEvent.targetOne).then((a: vscode.TextDocument) => {
+              //   vscode.window.showTextDocument(a, undefined, false);
+              // }, (error: any) => {
+              //   console.error(error);
+              //   debugger;
+              // });
 
               vscodeInteropEvent.result = "success";
               webviewView.webview.postMessage(vscodeInteropEvent);

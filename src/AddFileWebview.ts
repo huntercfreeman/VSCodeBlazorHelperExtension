@@ -39,12 +39,18 @@ export class AddFileWebview {
               vscodeInteropEvent.result = this._eventId;
 
               webviewView.webview.postMessage(vscodeInteropEvent);
+
+              break;
             }
             case "openAddFileForm": {
               this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
+
+              break;
             }
             case "explicitRemove": {
               this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
+
+              break;
             }
           }
         }
