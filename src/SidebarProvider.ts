@@ -365,6 +365,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               return;
           }
       }
+        else if (vscodeInteropEvent.command === "explicitRemove") {
+      }
   
           iFrame.contentWindow.postMessage(vscodeInteropEvent, "*");
       }, false);

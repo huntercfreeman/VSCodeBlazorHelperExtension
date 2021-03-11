@@ -43,6 +43,9 @@ export class AddFileWebview {
             case "openAddFileForm": {
               this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
             }
+            case "explicitRemove": {
+              this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
+            }
           }
         }
       }
@@ -110,6 +113,13 @@ export class AddFileWebview {
     else if (vscodeInteropEvent.command === "openAddFileForm") {
       if (vscodeInteropEvent.result !== undefined ||
           vscodeInteropEvent.result !== null) {
+          vscode.postMessage(vscodeInteropEvent);
+          return;
+      }
+  }
+    else if (vscodeInteropEvent.command === "explicitRemove") {
+      if (vscodeInteropEvent.result === undefined ||
+          vscodeInteropEvent.result === null) {
           vscode.postMessage(vscodeInteropEvent);
           return;
       }
