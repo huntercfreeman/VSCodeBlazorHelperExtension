@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { fstat } from 'fs';
 import { AddProjectWebview } from "./AddProjectWebview";
+import { FormWebview } from "./FormWebview";
 import { AddFileWebview } from "./AddFileWebview";
 const fs = require('fs');
 
@@ -196,7 +197,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               break;
             }
             case "openAddFileForm": {
-              const addFileWebview = new AddFileWebview(this._extensionUri,
+              const addFileWebview = new FormWebview(this._extensionUri,
+                "/emptyEditor",
                 vscodeInteropEvent.targetOne,
                 vscodeInteropEvent.targetTwo,
                 vscodeInteropEvent.message,
@@ -211,6 +213,42 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               );
 
               addFileWebview.resolveWebviewView(panel);
+              break;
+
+              // const addFileWebview = new AddFileWebview(this._extensionUri,
+              //   vscodeInteropEvent.targetOne,
+              //   vscodeInteropEvent.targetTwo,
+              //   vscodeInteropEvent.message,
+              //   vscodeInteropEvent.id,
+              //   webviewView);
+
+              // const panel = vscode.window.createWebviewPanel(
+              //   'newFile',
+              //   'New File',
+              //   vscode.ViewColumn.One,
+              //   { enableScripts: true }
+              // );
+
+              // addFileWebview.resolveWebviewView(panel);
+              // break;
+            }
+            case "openAddDirectoryForm": {
+              const addDirectoryWebview = new FormWebview(this._extensionUri,
+                "/addDirectory",
+                vscodeInteropEvent.targetOne,
+                vscodeInteropEvent.targetTwo,
+                vscodeInteropEvent.message,
+                vscodeInteropEvent.id,
+                webviewView);
+
+              const panel = vscode.window.createWebviewPanel(
+                'newDirectory',
+                'New Directory',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+              );
+
+              addDirectoryWebview.resolveWebviewView(panel);
               break;
             }
             case "overwriteSolutionFile": {
