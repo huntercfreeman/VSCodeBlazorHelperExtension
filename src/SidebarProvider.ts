@@ -198,7 +198,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             case "openAddFileForm": {
               const addFileWebview = new FormWebview(this._extensionUri,
-                "/emptyEditor",
+                "/addFile",
                 vscodeInteropEvent.targetOne,
                 vscodeInteropEvent.targetTwo,
                 vscodeInteropEvent.message,
@@ -214,23 +214,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
               addFileWebview.resolveWebviewView(panel);
               break;
-
-              // const addFileWebview = new AddFileWebview(this._extensionUri,
-              //   vscodeInteropEvent.targetOne,
-              //   vscodeInteropEvent.targetTwo,
-              //   vscodeInteropEvent.message,
-              //   vscodeInteropEvent.id,
-              //   webviewView);
-
-              // const panel = vscode.window.createWebviewPanel(
-              //   'newFile',
-              //   'New File',
-              //   vscode.ViewColumn.One,
-              //   { enableScripts: true }
-              // );
-
-              // addFileWebview.resolveWebviewView(panel);
-              // break;
             }
             case "openAddDirectoryForm": {
               const addDirectoryWebview = new FormWebview(this._extensionUri,
@@ -422,6 +405,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               return;
           }
       }
+      else if (vscodeInteropEvent.command === "openAddDirectoryForm") {
+        if (vscodeInteropEvent.result === undefined ||
+            vscodeInteropEvent.result === null) {
+            vscode.postMessage(vscodeInteropEvent);
+            return;
+        }
+    }
         else if (vscodeInteropEvent.command === "explicitRemove") {
       }
   

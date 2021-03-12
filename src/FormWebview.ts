@@ -48,6 +48,11 @@ export class FormWebview {
 
               break;
             }
+            case "openAddDirectoryForm": {
+                this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
+  
+                break;
+              }
             case "explicitRemove": {
               this._sidePanelWebView.webview.postMessage(vscodeInteropEvent);
 
@@ -124,6 +129,13 @@ export class FormWebview {
           return;
       }
   }
+  else if (vscodeInteropEvent.command === "openAddDirectoryForm") {
+    if (vscodeInteropEvent.result !== undefined ||
+        vscodeInteropEvent.result !== null) {
+        vscode.postMessage(vscodeInteropEvent);
+        return;
+    }
+}
     else if (vscodeInteropEvent.command === "explicitRemove") {
       if (vscodeInteropEvent.result === undefined ||
           vscodeInteropEvent.result === null) {
